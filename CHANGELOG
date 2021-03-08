@@ -1,0 +1,466 @@
+CHANGELOG
+
+This file is to comment the changes to the myWMS application.
+For prior changes have a look to the the documentation of the concerned releases.
+
+
+
+
+Release 2.0
+-----------
+
+    Fork myWMS
+
+
+    Based on myWMS-LOS 1.12.0
+
+    Technical changes
+    -------------------------------------------------------------------------------
+    - The build system is switched from ant to maven
+    - Support for Java 11
+    - Support for Wildfly 16
+    - Added new module registration and setup functionality
+
+
+    Removed
+    -------------------------------------------------------------------------------
+    - Plugin management for rich client application
+    - Clearing- and Log-items
+    - Deprecated Methods and Classes
+    - Unreferenced files
+    - BasicFacade
+    - mywms.as cactus
+    - LOSServiceProperty (Replaced by SystemProperty)
+    - Separate database project (Replaced by hibernate automatic ddl update)
+
+
+    Program changes to be done to convert your existing mywms application to the new environment
+    -------------------------------------------------------------------------------
+    - Due to the changed build system, the project structure and build artifacts have changed. 
+        You will have to adjust the referenced jars or artifacts of your derivative application to the new structure.
+    - Import statements
+        Some classes have been moved to new packages.
+        It will be necessary to reorganize the imports to access the new classes.
+    - Removed items
+        If your derivative application uses some of the removed items, you will have to copy them from the old sources into your application.
+
+
+
+
+Release 2.1
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    - Reorganization of the entities
+    - Add packaging units
+    - Make zones configurable
+    - Add validation services for CRUD operations
+    - Enable handling of item images
+
+
+    Functional changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - The dedicated usage flags of the Area have been changed to a configurable collection. So it is possible to define project specific operations.
+    - Configurable zones and overflow zones. Overflow zones are used by the location finder, when there is no hit in the original zone.
+    - Racks are no more handled as the entity LOSRack. It is now just a String attribute of the StorageLocation.
+    - Packaging units have been added.
+    - Images for ItemData or other entities can be stored/accessed in database
+    - Password changes are validated by a regular expression
+
+    
+    Technical changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Internally extended entities are merged to only one new entity.
+        Referenced entities are moved to the new package too.
+
+        Affected entities
+        - de.linogistix.los.location.model.LOSArea to de.wms2.mywms.location.Area
+        - de.linogistix.los.location.model.LOSLocationCluster to de.wms2.mywms.location.LocationCluster
+        - de.linogistix.los.location.model.LOSStorageLocationType to to de.wms2.mywms.location.LocationType
+        - de.linogistix.los.location.model.LOSStorageLocation to to de.wms2.mywms.location.StorageLocation
+        - de.linogistix.los.location.model.LOSStorageStrategy to to de.wms2.mywms.strategy.StorageStrategy
+        - de.linogistix.los.location.model.LOSUnitLoad to to de.wms2.mywms.inventory.UnitLoad
+        - de.linogistix.los.location.model.LOSUnitLoadPackageType to de.wms2.mywms.inventory.UnitLoadPackageType
+        - de.linogistix.los.location.model.LOSTypeCapacityConstraint to de.wms2.mywms.strategy.TypeCapacityConstraint
+        - de.linogistix.los.model.LOSSystemProperty to de.wms2.mywms.property.SystemProperty
+        - org.mywms.model.ItemData to de.wms2.mywms.product.ItemData
+        - org.mywms.model.ItemDataNumber to de.wms2.mywms.product.ItemDataNumber
+        - org.mywms.model.ItemUnit to de.wms2.mywms.product.ItemUnit
+        - org.mywms.model.Lot to de.wms2.mywms.inventory.Lot
+        - org.mywms.model.StockUnit to de.wms2.mywms.inventory.StockUnit
+        - org.mywms.model.UnitLoad to de.wms2.mywms.inventory.UnitLoad
+        - org.mywms.model.UnitLoadType to de.wms2.mywms.inventory.UnitLoadType
+        - org.mywms.model.Area to de.wms2.mywms.location.Area
+        - org.mywms.model.Zone to de.wms2.mywms.strategy.Zone
+
+    - JPA annotations of the entity classes have been changed from getter methods to attributes
+
+    - The naming of the changed entity tables and attributes have been changed to JPA default values
+
+    - Changed database entities and attributes
+        - Area replaced the usage-flags by a extensionable list
+        - Area lost client assignment
+        - Zone lost client assignment
+        - Zone got new attribute 'nextZone'
+        - LOSRack entity is replaced by a String attribute of the StorageLocation
+        - ItemData.handlingUnit is renamed to ItemData.itemUnit
+        - ItemUnit.unitName is renamed to ItemUnit.name
+        - ItemData.residualTermOfUsageGI is renamed to ItemData.shelflife
+        - ItemData got new attribute 'defaultStorageStrategy'
+        - ReplenishOrder.requestedRack is changed from datatype LOSRack to String
+        - PackagingUnit as new entity
+        - StockUnit got new attribute 'packagingUnit'
+        - ItemData got new attribute 'defaultPackagingUnit'
+        - ItemDataNumber got new attribute 'packagingUnit'
+        - SystemProperty changed some attribute names and lost attribute 'hidden'
+
+    - Switched rich client to Netbeans 11
+
+
+    Bugfixes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    Fixed some LazyLoadingExceptions in the mobile application
+
+
+    Switch to Release 2.1
+    -------------------------------------------------------------------------------
+    - Rename tables
+        - LOSArea to Area
+        - LOSLocationCluster to LocationCluster
+        - LOSStorageLocationType to LocationType
+        - LOSStorageLocation to StorageLocation
+        - LOSUnitLoad to UnitLoad
+        - LOSUnitLoadPackageType to UnitLoadPackageType
+        - LOSTypeCapacityConstraint to TypeCapacityConstraint
+
+    - Organize imports
+
+    - Change JPA annotations of your entity classes from getter methods to the attributes
+
+    - Check your persistence.xml file
+
+    - Rename direct accesses to fields. In some JPQL statements or named queries, the tables and fields are addressed as string values.
+        - LOSTypeCapacityConstraint.storageLocationType to TypeCapacityConstraint.locationType
+        - LOSStorageLocation.storageLocationType to StorageLocation.locationType
+        - LOSStorageLocation.cluster to StorageLocation.locationCluster
+        - LOSArea.useFor... to Area.usages
+
+    - Check removed entities and attributes
+        - LOSArea.client
+        - Zone.client
+        - LOSRack
+
+    - Check changed attributes
+        - LOSArea.useFor...
+        - ItemData.itemUnit
+        - ItemUnit.name
+        - ItemData.shelflife
+        - ReplenishOrder.requestedRack
+
+    - Some services and methods have been moved or replaced. 
+        Especially many operations of user- and client-handling has been moved to UserBusiness and ClientBusiness component. So it might be necessary to adjust your source code to the new structure.
+    
+    - Replace the newly as deprecated marked accesses. The next version may not longer support them.
+
+    - Upgrade existing database structures
+        There is an upgrade script for postgres database structure
+        But have in mind: This script comes without any warranty!
+        We recommend to compare the automatically generated database structure with the existing database structure and manually adjust them.
+
+
+
+
+Release 2.2
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    StockUnit and UnitLoad got a state
+        - The state differs between incoming- ,outgoing and on-stock material.
+        - Only on-stock material is available for picking.
+        - After finishing the goods receipt process, the material will get the on-stock state.
+        - After picking the material will get the outgoing state.
+    Do not lock picked material
+        - The state differs between incoming- ,on-stock and outgoing material.
+        - Normal operations are possible for outgoing material. For example store pre-picked material until delivery on regular storage-locations.
+    Only one journal for stock unit and unit load changes
+
+    Functional changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - The state of UnitLoad and StockUnit is maintained by the existing processes.
+    - Material is only available for replenish and picking processes after finishing the goods receipt processes.
+    - After picking the material it is excluded from normal 'on-stock' operations.
+
+
+    Technical changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Changed database entities and attributes
+        - StockUnit got new attribute 'state'
+        - UnitLoad got new attribute 'state'
+    - The setup of the modules starts automatically on the first deployment
+
+    Bugfixes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+
+
+    Switch to Release 2.2
+    -------------------------------------------------------------------------------
+    - Some business-services and -facades got new state-parameters. Add suitable values from StockState...
+
+    - Upgrade existing database structures
+        There is an upgrade script for postgres database structure
+        But have in mind: This script comes without any warranty!
+        We recommend to compare the automatically generated database structure with the existing database structure and manually adjust them.
+
+
+
+
+Release 2.3
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    - Reorganization of customer- and picking- and shipping orders
+    - Reorganization of JasperReports
+    - Replace custom service calls by CDI events
+    - Advice as head/line records and reorganization of goods receipt structures
+    - Added state to item data and client to filter active/inactive entities
+    - Reorganization of replenish order
+    - Adjustable sequences
+    - Adjustable min-, max- and picking-amounts on fixed locations
+    - Storage strategy got more options
+    - Enable complete pallet picking
+    - Actualization of documentation
+    - Support of Wildfly 18
+    - Print packet list of shipping and picking orders.
+
+
+    Functional changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Orders and picking orders got timestamps for start and finishing operation
+    - Generation of picking orders requires a strategy
+    - Generation of picking order can combine multiple customer orders
+    - Generation of picking order can be restricted to only complete pallets
+    - Sequences can be configured
+    - Adjust stock state and order state
+    - Unit load type got a hint for which usecase it is available
+    - Packet got reference to delivery order
+    - Create default data on first startup of server application
+    - Storage of labels has been disabled
+    - Added address to delivery-, picking- and shipping-orders
+    - Added address to deliverynote report
+    - Added new packet-list report to picking- and shipping-orders
+    - Enable images in reports
+    - Removed activity code from manual actions
+    - Added external number to mobile picking- and shipping-order selection
+    - Confirm destination of shipping orders in mobile operation
+    - Storage strategy with near of picking-location option
+    - Storage strategy with more sort options
+
+
+    Technical changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Changed database entities
+        de.linogistix.los.inventory.model.LOSCustomerOrder replaced by de.wms2.mywms.delivery.DeliveryOrder
+        de.linogistix.los.inventory.model.LOSCustomerOrderPosition replaced by de.wms2.mywms.delivery.DeliveryOrderLine
+        de.linogistix.los.inventory.model.LOSPickingOrder replaced by de.wms2.mywms.picking.PickingOrder
+        de.linogistix.los.inventory.model.LOSPickingPosition replaced by de.wms2.mywms.picking.PickingOrderLine
+        de.linogistix.los.inventory.model.LOSPickingUnitLoad replaced by de.wms2.mywms.picking.PickingUnitLoad
+        de.linogistix.los.inventory.model.LOSOrderStrategy replaced by de.wms2.mywms.strategy.OrderStrategy
+        de.linogistix.los.location.model.LOSFixedLocationAssignment replaced by de.wms2.mywms.strategy.FixAssignment
+        de.linogistix.los.model.LOSJasperReport replaced by de.wms2.mywms.report.Report
+        de.linogistix.los.model.LOSSequenceNumber replaced by de.wms2.mywms.sequence.SequenceNumber
+        org.mywms.model.Document replaced by de.wms2.mywms.document.Document
+        de.linogistix.los.inventory.model.LOSGoodsReceipt replaced by de.wms2.mywms.goodsreceipt.GoodsReceipt
+        de.linogistix.los.inventory.model.LOSGoodsReceiptPosition replaced by de.wms2.mywms.goodsreceipt.GoodsReceiptLine
+        de.linogistix.los.model.LOSJasperReport replaced by de.wms2.mywms.report.Report
+        de.linogistix.los.model.LOSSequenceNumber replaced by de.wms2.mywms.sequence.SequenceNumber
+        de.linogistix.los.inventory.model.LOSGoodsOutRequest replaced by de.wms2.mywms.shipping.ShippingOrder
+        de.linogistix.los.inventory.model.LOSGoodsOutRequestPosition replaced by de.wms2.mywms.shipping.ShippingOrderLine
+        de.wms2.mywms.picking.PickingUnitLoad replaced by de.wms2.mywms.picking.Packet
+        de.linogistix.los.inventory.model.LOSStorageRequest replaced by de.wms2.mywms.transport.TransportOrder
+        de.wms2.mywms.inventory.UnitLoadType got new attribute 'usages'
+        de.wms2.mywms.address.Address is new
+        de.wms2.mywms.advice.Advice, AdviceLine
+
+    - Removed some duplicate method implementations from entity services
+    - Made API of entity services a little more consistent
+    - InventoryBusiness replaces: LOSInventoryComponent, ManageInventoryBusiness, InventoryProcessFacade, LOSStorage
+    - Replace CustomService calls of inventory posting methods with CDI events
+    - Replace PackageType of UnitLoad to dedicated flags in UnitLoadType
+    - Report got new backend and data structures
+    - Document got new backend and data structures
+    - Removed client from order strategy
+
+
+    Bugfixes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    Call of toUniqueString() in BasicEntity subclasses must not call toString()
+
+
+    Switch to Release 2.3
+    -------------------------------------------------------------------------------
+    - The replaced entities have similar attributes to the original ones. In most cases it will be easy to adapt.
+    - Some duplicate implementations have been moved to only one service. If you get compile errors in your own modules try to use another service. E.g. StorageLocationEntityService instead of LOSStorageLocationService or QueryStorageLocationService
+    - Deliverynote report .jrxml has to be adjusted to the changed data structures
+    - Some customization user exits have been replaced by CDI events. Replace the on... Methods of your customization services by apropriate event observers.
+    - Upgrade existing database structures manually. Automatic upgrade of the structure of existing databases may not work.
+
+
+
+
+Release 2.4
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    - Partial operation of delivery orders
+    - Made shipping order generation optional
+    - Allocation of storagelocations with more than 100%
+    - Enabled consignment stock
+    - Editable addresses in outbound orders
+
+
+    Functional changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Release and finish delivery orders with amount differences on single positions
+    - Print positions with zero amount on delivery note
+    - Enabled delivery orders to have lines with material of the orders client and the system client
+    - Enabled advices and goods receipts to have lines with material of the orders client and the system client
+
+
+    Technical changes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Changed database entities
+    - Removed current type capacity constraint from storage location
+    - Removed client from lot and itemdatanumber
+    - Switch client of received and picked material to ordering client
+
+
+    Bugfixes (for details have a look to the git repository)
+    -------------------------------------------------------------------------------
+
+
+    Switch to Release 2.4
+    -------------------------------------------------------------------------------
+    - Upgrade existing database structures manually. Automatic upgrade of the structure of existing databases may not work.
+    - Drop column allocationtype of table typecapacityconstraint
+    - Drop column currenttypecapacityconstraint_id of table storagelocation
+    - Drop column client_id of table lot
+    - Drop column client_id of table itemdatanumber
+
+
+
+Release 2.5
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    - The lot is no more handled as separate entity. The functionality is moved to the stock unit. 
+        With this individual lot and best-before handling of each stock unit is possible.
+        Extinguish orders can be generated for single stock-units and unit-laods. Not only for a complete lot.
+    - Made the operator optional invisible in InventoryJournal
+    - Address and carrier data in all outgoing orders and packets
+    - Weight and volume calculation for outgoing orders
+    - Added support for wildfly-19
+
+
+    Functional changes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Best before can be mandatory for an stock units of an item data
+    - Changed best before date to an attribute of the stock unit
+    - Changed lot number to an attribute of the stock unit
+    - Removed lot entity
+    - Added generation of extinguish orders to stock units and unit loads
+    - Added filter of goods-receipt material to stock unit and unit load dialogues
+    - Complete unit load picking only for unit load types which are valid for shipping
+    - Added customer and sender to delivery order
+    - Only use unit loads with the shipping-flag set for complete picking operation
+    - Manual creation of shipping order is limited to one client
+    - Made the type of the InventoryJournal accessable for filters.
+    - Added optional check digits to sequences
+    - Configurable zone overflow path
+    - Propagate address and carrier to pickingorders, shippingorders and packets
+    - Weight and volume of outgoing orders are calculated on the fly. No redundant storage.
+    - Dimensions (height,width,depth) got 3 decimals for mm
+    - Added optional modulo 10 check digit to sequence number
+    - Enable Pick-To identification in mobile picking process in advance
+
+
+    Technical changes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Reduce the amount of translation helper classes
+    - Changed user-name to user-reference in InventoryJournal. It's better for pseudonymization.
+    - Removed unused field from SequenceNumber
+    - Use validation in trash handler
+    - Made the red rich client connection window a little less intrusive
+
+
+    Bugfixes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Enabled address editing in rich client
+
+
+    Switch to Release 2.5
+    -------------------------------------------------------------------------------
+    - Upgrade existing database structures manually. Automatic upgrade of the structure of existing databases may not work.
+    - The InventoryJournal has changed. Update the operator_id column with the id of the User whose name is in the old operator column
+    - The InventoryJournal has changed. The datatype of the recordtype column is changed from varchar to integer. Manually update the values based on the defined values in InventoryJournalRecordType
+
+
+
+Release 2.6
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    - Added support for wildfly-21
+
+
+    Functional changes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+    - Spanish translation
+
+
+    Technical changes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+
+
+    Bugfixes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+    Do not use stock with active storage order for replenish order generation
+    StackOverflow in UnitLoadType.toUniqueString() method
+    Some fixes in translation of stocktaking
+
+
+    Switch to Release 2.6
+    -------------------------------------------------------------------------------
+    - Upgrade existing database structures manually. Automatic upgrade of the structure of existing databases may not work.
+
+
+
+Release 2.7
+-----------
+
+    Main topics
+    -------------------------------------------------------------------------------
+    - Added support for wildfly-22
+    - Switched to Netbeans-12
+
+
+    Functional changes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+
+
+    Technical changes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+
+
+    Bugfixes (for details and complete list have a look to the git repository)
+    -------------------------------------------------------------------------------
+
+
+    Switch to Release 2.7
+    -------------------------------------------------------------------------------
+

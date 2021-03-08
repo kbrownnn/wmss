@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+OpenIDE-Module: de.linogistix.common
+OpenIDE-Module-Layer: de/linogistix/common/layer.xml
+OpenIDE-Module-Install: de/linogistix/common/Installer.class
+OpenIDE-Module-Localizing-Bundle: de/linogistix/common/res/Bundle.properties
+OpenIDE-Module-Specification-Version: 2
+
+
+
